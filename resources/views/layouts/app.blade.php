@@ -7,7 +7,6 @@
 
     <title>@yield('title', config('site.brand.name') . ' ' . config('site.brand.suffix'))</title>
 
-    <link rel="icon" href="/assets/images/logo/favicon.ico" sizes="any">
     <link rel="preload" as="font" type="font/woff" href="/assets/fonts/ChettaVissto.woff" crossorigin>
     <link rel="preload" as="font" type="font/ttf" href="/assets/fonts/Outfit-Regular.ttf" crossorigin>
 
@@ -19,5 +18,8 @@
     <main>
         @yield('content')
     </main>
+
+    @include('partials.footer')
+    @include('partials.bottom-nav')
 </body>
 </html>

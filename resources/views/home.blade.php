@@ -4,4 +4,9 @@
 
 @section('content')
     @include('partials.hero')
+    @include('partials.destinations')
+    @include('partials.tours')
+    @include('partials.why-us')
+    @include('partials.stories')
+    @include('partials.newsletter')
 @endsection

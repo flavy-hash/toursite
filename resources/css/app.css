@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* ---------------------------------------------------------------------------
+ | Brand fonts
+ |--------------------------------------------------------------------------*/
+
+@font-face {
+    font-family: 'Chetta Vissto';
+    src: url('/assets/fonts/ChettaVissto.woff') format('woff'),
+         url('/assets/fonts/ChettaVissto.otf') format('opentype'),
+         url('/assets/fonts/ChettaVissto.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/assets/fonts/Outfit-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/assets/fonts/Outfit-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/assets/fonts/Outfit-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/assets/fonts/Outfit-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/assets/fonts/Outfit-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ---------------------------------------------------------------------------
+ | Design tokens
+ |--------------------------------------------------------------------------*/
+
+@theme {
+    --font-sans: 'Outfit', system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-display: 'Chetta Vissto', 'Outfit', system-ui, sans-serif;
+
+    --color-brown: #4a2e1d;
+    --color-dark-brown: #3a2418;
+    --color-sand: #e5d3b3;
+    --color-cream: #f0e6d2;
+    --color-light-sand: #f5f0e6;
+}
+
+@layer base {
+    body {
+        font-family: var(--font-sans);
+        background-color: var(--color-dark-brown);
+        color: var(--color-light-sand);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+        background-color: var(--color-sand);
+        color: var(--color-dark-brown);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ | Hero slider
+ |--------------------------------------------------------------------------*/
+
+@layer components {
+    .hero-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transform: scale(1.06);
+        transition: opacity 1200ms ease, transform 7000ms ease-out;
+        will-change: opacity, transform;
+    }
+
+    .hero-slide[data-active='true'] {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Warm brand wash so the artwork reads as one image with the copy. */
+    .hero-wash {
+        background:
+            linear-gradient(to right, var(--color-brown) 0%, color-mix(in srgb, var(--color-brown) 55%, transparent) 45%, transparent 75%),
+            linear-gradient(to top, color-mix(in srgb, var(--color-dark-brown) 80%, transparent) 0%, transparent 55%);
+    }
+
+    .hero-enter {
+        animation: hero-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes hero-enter {
+        from {
+            opacity: 0;
+            transform: translateY(22px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .nav-underline::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -6px;
+        height: 2px;
+        background-color: var(--color-light-sand);
+        border-radius: 999px;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 260ms ease;
+    }
+
+    .nav-underline:hover::after,
+    .nav-underline[data-current='true']::after {
+        transform: scaleX(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-slide,
+    .hero-enter {
+        transition-duration: 1ms;
+        animation: none;
+    }
+}

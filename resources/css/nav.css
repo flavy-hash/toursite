@@ -1,0 +1,357 @@
+/* ---------------------------------------------------------------------------
+ | Navigation
+ |
+ | Desktop: links centred in the bar, each dropdown opening as one wide panel
+ | pinned to the centre of the viewport rather than to its trigger — so every
+ | menu lands in the same place regardless of which word you hover.
+ | Tablet: the same markup collapses into a drawer with accordion sub-menus.
+ | Phone: the drawer is dropped entirely in favour of the bottom tab bar.
+ |--------------------------------------------------------------------------*/
+
+@layer components {
+
+    .nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 2.1rem;
+    }
+
+    .nav-item {
+        position: relative;
+    }
+
+    .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.9rem 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: color-mix(in srgb, white 90%, transparent);
+        border-bottom: 1px solid transparent;
+        transition: color 200ms ease, border-color 200ms ease;
+    }
+
+    .nav-link:hover,
+    .nav-link[data-current="true"] {
+        color: white;
+        border-bottom-color: var(--color-sand);
+    }
+
+    .nav-chevron {
+        transition: transform 200ms ease;
+    }
+
+    .nav-item:hover .nav-chevron,
+    .nav-item:focus-within .nav-chevron {
+        transform: rotate(180deg);
+    }
+
+    /* --- Mega panel --------------------------------------------------- */
+
+    .mega {
+        position: fixed;
+        left: 50%;
+        top: auto;
+        z-index: 120;
+        display: flex;
+        gap: 1.6rem;
+        width: min(1040px, 92vw);
+        padding: 1.5rem;
+        border: 1px solid color-mix(in srgb, var(--color-sand) 22%, transparent);
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--color-dark-brown) 96%, transparent);
+        box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.55);
+        backdrop-filter: blur(14px);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-50%) translateY(8px);
+        transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .nav-item:hover .mega,
+    .nav-item:focus-within .mega {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .mega-side {
+        width: 22%;
+        padding-right: 1.2rem;
+        border-right: 1px solid color-mix(in srgb, var(--color-sand) 18%, transparent);
+    }
+
+    .mega-side a {
+        display: block;
+        padding: 0.6rem 0.7rem;
+        border-left: 3px solid transparent;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--color-cream) 80%, transparent);
+        transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+    }
+
+    .mega-side a:hover {
+        border-left-color: var(--color-sand);
+        background: color-mix(in srgb, var(--color-sand) 12%, transparent);
+        color: white;
+    }
+
+    .mega-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mega-copy {
+        max-width: 46ch;
+        margin: 0.4rem 0 1.1rem;
+        font-size: 0.87rem;
+        font-weight: 300;
+        line-height: 1.6;
+        color: color-mix(in srgb, white 72%, transparent);
+    }
+
+    .mega-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.2rem;
+        padding: 0.7rem 1.3rem;
+        border: 1px solid color-mix(in srgb, var(--color-sand) 45%, transparent);
+        border-radius: 999px;
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-cream);
+        transition: background-color 200ms ease, color 200ms ease;
+    }
+
+    .mega-cta:hover {
+        background: var(--color-sand);
+        color: var(--color-dark-brown);
+    }
+
+    .mega-thumb {
+        width: 26%;
+        min-height: 170px;
+        overflow: hidden;
+        border-radius: 12px;
+        background-color: var(--color-brown);
+    }
+
+    .mega-thumb img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* --- WhatsApp CTA -------------------------------------------------- */
+
+    .wa-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1.1rem;
+        border: 1px solid color-mix(in srgb, var(--color-sand) 45%, transparent);
+        border-radius: 999px;
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-cream);
+        backdrop-filter: blur(8px);
+        transition: background-color 200ms ease, color 200ms ease;
+    }
+
+    .wa-btn:hover {
+        background: var(--color-sand);
+        color: var(--color-dark-brown);
+    }
+
+    /* Below xl the label goes and the button collapses to its icon. */
+    @media (max-width: 1279px) {
+        .wa-btn span {
+            display: none;
+        }
+
+        .wa-btn {
+            padding: 0.65rem 0.75rem;
+        }
+    }
+
+    /* --- Drawer toggle ------------------------------------------------ */
+
+    .hamburger {
+        position: relative;
+        display: none;
+        width: 44px;
+        height: 44px;
+        border: 1px solid color-mix(in srgb, var(--color-sand) 25%, transparent);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--color-sand) 10%, transparent);
+        backdrop-filter: blur(8px);
+    }
+
+    .hamburger span:not(.sr-only) {
+        position: absolute;
+        left: 13px;
+        right: 13px;
+        height: 2px;
+        border-radius: 2px;
+        background: white;
+        transition: transform 250ms ease, opacity 250ms ease, top 250ms ease;
+    }
+
+    .hamburger span:not(.sr-only):nth-of-type(1) { top: 16px; }
+    .hamburger span:not(.sr-only):nth-of-type(2) { top: 21px; }
+    .hamburger span:not(.sr-only):nth-of-type(3) { top: 26px; }
+
+    .hamburger.is-open span:not(.sr-only):nth-of-type(1) { top: 21px; transform: rotate(45deg); }
+    .hamburger.is-open span:not(.sr-only):nth-of-type(2) { opacity: 0; }
+    .hamburger.is-open span:not(.sr-only):nth-of-type(3) { top: 21px; transform: rotate(-45deg); }
+}
+
+/* --- Tablet: drawer + accordion ---------------------------------------- */
+
+@media (max-width: 1023px) {
+    .hamburger {
+        display: block;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        max-height: calc(100vh - 100%);
+        overflow-y: auto;
+        padding: 0.6rem 1.5rem 1.5rem;
+        background: color-mix(in srgb, var(--color-dark-brown) 97%, transparent);
+        border-bottom: 1px solid color-mix(in srgb, var(--color-sand) 18%, transparent);
+        backdrop-filter: blur(14px);
+    }
+
+    .nav-menu.is-open {
+        display: flex;
+    }
+
+    .nav-link {
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--color-sand) 14%, transparent);
+    }
+
+    /* The panel flattens into an inline accordion; only the rail survives. */
+    .mega {
+        position: static;
+        display: none;
+        width: 100%;
+        padding: 0.5rem 0 0.6rem 0.8rem;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+    }
+
+    .nav-item.is-open .mega {
+        display: block;
+    }
+
+    .nav-item.is-open .nav-chevron {
+        transform: rotate(180deg);
+    }
+
+    /* Hover must not open anything once taps are driving the accordion. */
+    .nav-item:hover .mega,
+    .nav-item:focus-within .mega {
+        opacity: 1;
+        transform: none;
+    }
+
+    .mega-side {
+        width: 100%;
+        padding: 0;
+        border: none;
+    }
+
+    .mega-main,
+    .mega-thumb {
+        display: none;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ | Mobile bottom navigation
+ |--------------------------------------------------------------------------*/
+
+.bottom-nav {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 190;
+    display: none;
+    background: color-mix(in srgb, var(--color-dark-brown) 97%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--color-sand) 20%, transparent);
+    backdrop-filter: blur(14px);
+    padding: 0.45rem 0 max(0.45rem, env(safe-area-inset-bottom));
+}
+
+.bottom-nav-row {
+    display: flex;
+    justify-content: space-around;
+}
+
+.bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.3rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--color-cream) 75%, transparent);
+    transition: color 200ms ease;
+}
+
+.bottom-nav a:hover,
+.bottom-nav a.is-active {
+    color: var(--color-sand);
+}
+
+/* Six labels have to survive a 320px phone. */
+@media (max-width: 380px) {
+    .bottom-nav a {
+        font-size: 0.55rem;
+        letter-spacing: 0.02em;
+        padding: 0.3rem 0.15rem;
+    }
+}
+
+/* Phones navigate from the bottom bar, so the drawer and its toggle go away. */
+@media (max-width: 767px) {
+    .bottom-nav {
+        display: block;
+    }
+
+    .hamburger,
+    .nav-menu {
+        display: none;
+    }
+
+    body {
+        padding-bottom: 68px;
+    }
+}

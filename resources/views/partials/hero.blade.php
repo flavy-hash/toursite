@@ -167,8 +167,25 @@
     <div class="absolute inset-x-0 bottom-8 z-10 px-6 sm:px-12 lg:px-20">
         <dl class="mx-auto grid max-w-5xl grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
             @foreach ($stats as $stat)
+                @php
+                    // "100+" -> 100 with a "+" suffix; "4.9" -> 4.9 to one decimal;
+                    // "1,200+" -> 1200 counted, then re-grouped as it renders.
+                    preg_match('/^([\d.,]+)(.*)$/', $stat['value'], $parts);
+                    $figure = $parts[1] ?? $stat['value'];
+                    $suffix = $parts[2] ?? '';
+                    $number = str_replace(',', '', $figure);
+                    $decimals = strlen(substr(strrchr($number, '.') ?: '', 1));
+                    $group = str_contains($figure, ',');
+                @endphp
+
                 <div class="rounded-2xl border border-sand/20 bg-sand/10 p-4 text-center backdrop-blur-md">
-                    <dd class="font-display text-3xl text-white lg:text-4xl">{{ $stat['value'] }}</dd>
+                    <dd
+                        class="font-display text-3xl tabular-nums text-white lg:text-4xl"
+                        data-count-to="{{ $number }}"
+                        data-count-suffix="{{ $suffix }}"
+                        data-count-decimals="{{ $decimals }}"
+                        @if ($group) data-count-group @endif
+                    >{{ $stat['value'] }}</dd>
                     <dt class="mt-1 text-xs text-white/70 lg:text-sm">{{ $stat['label'] }}</dt>
                 </div>
             @endforeach

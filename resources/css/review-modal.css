@@ -1,0 +1,298 @@
+/* ---------------------------------------------------------------------------
+ | Review modal
+ |
+ | Built on a native <dialog>, so focus trapping, Esc-to-close and the top
+ | layer come from the browser rather than from script.
+ |--------------------------------------------------------------------------*/
+
+.review-modal {
+    /*
+     * A modal <dialog> is centred by the UA with inset:0 plus margin:auto.
+     * Tailwind's Preflight sets margin:0 on every element, which wipes that
+     * out and drops the panel into the top-left corner — so both are restored
+     * here rather than relying on the browser default.
+     */
+    position: fixed;
+    inset: 0;
+    margin: auto;
+
+    width: min(640px, calc(100vw - 2rem));
+
+    /*
+     * Without fit-content the box stretches to fill inset:0 and only then hits
+     * max-height, so a short form would still render as a full-height panel.
+     */
+    height: fit-content;
+    max-height: min(88svh, 900px);
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--color-sand) 22%, transparent);
+    border-radius: 20px;
+    background: var(--color-dark-brown);
+    color: var(--color-light-sand);
+    box-shadow: 0 40px 80px -24px rgb(0 0 0 / 0.65);
+    overflow: hidden;
+}
+
+.review-modal::backdrop {
+    background: color-mix(in srgb, #000 62%, transparent);
+    backdrop-filter: blur(3px);
+}
+
+.review-modal[open] {
+    animation: review-modal-in 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes review-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+}
+
+.review-modal form {
+    display: flex;
+    flex-direction: column;
+    max-height: inherit;
+}
+
+/* --- Header ------------------------------------------------------------ */
+
+.review-modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.6rem 1.75rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-sand) 15%, transparent);
+    background: color-mix(in srgb, #000 18%, transparent);
+}
+
+.review-modal-badge {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-sand) 16%, transparent);
+    color: var(--color-sand);
+}
+
+.review-modal-close {
+    flex: none;
+    margin-left: auto;
+    padding: 0.4rem;
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--color-light-sand) 60%, transparent);
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.review-modal-close:hover {
+    background: color-mix(in srgb, var(--color-sand) 14%, transparent);
+    color: var(--color-cream);
+}
+
+/* --- Body and footer --------------------------------------------------- */
+
+.review-modal-body {
+    padding: 1.75rem;
+    overflow-y: auto;
+}
+
+.review-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-sand) 15%, transparent);
+    background: color-mix(in srgb, #000 18%, transparent);
+}
+
+/* --- Fields ------------------------------------------------------------ */
+
+.review-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-sand) 85%, transparent);
+}
+
+.review-label .req {
+    color: #fca5a5;
+}
+
+.review-hint {
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    color: color-mix(in srgb, var(--color-light-sand) 45%, transparent);
+}
+
+.review-field {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-sand) 20%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, #000 22%, transparent);
+    font-size: 0.9rem;
+    color: var(--color-light-sand);
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.review-field::placeholder {
+    color: color-mix(in srgb, var(--color-light-sand) 35%, transparent);
+}
+
+.review-field:focus {
+    outline: none;
+    border-color: var(--color-sand);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-sand) 22%, transparent);
+}
+
+textarea.review-field {
+    resize: vertical;
+    min-height: 7rem;
+}
+
+select.review-field option {
+    background: var(--color-dark-brown);
+}
+
+/* --- Upload dropzone --------------------------------------------------- */
+
+.review-dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 5.4rem;
+    padding: 0.9rem 1rem;
+    border: 1px dashed color-mix(in srgb, var(--color-sand) 35%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, #000 14%, transparent);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    text-align: center;
+    color: color-mix(in srgb, var(--color-light-sand) 60%, transparent);
+    cursor: pointer;
+    transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.review-dropzone:hover {
+    border-color: var(--color-sand);
+    background: color-mix(in srgb, var(--color-sand) 8%, transparent);
+}
+
+.review-dropzone strong {
+    color: var(--color-sand);
+    font-weight: 600;
+}
+
+/* Hidden visually, still focusable — the ring follows onto the label. */
+.review-dropzone input[type='file'] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.review-dropzone:focus-within {
+    border-color: var(--color-sand);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-sand) 22%, transparent);
+}
+
+/* --- Star picker -------------------------------------------------------- */
+
+.star-input {
+    display: flex;
+    /* Rendered 5 to 1, reversed for display, so the general sibling combinator
+       can light every star below the one chosen. */
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 0.25rem;
+}
+
+.star-input input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.star-input label {
+    color: color-mix(in srgb, var(--color-light-sand) 22%, transparent);
+    cursor: pointer;
+    transition: color 130ms ease, transform 130ms ease;
+}
+
+.star-input label:hover {
+    transform: scale(1.08);
+}
+
+.star-input input:checked ~ label,
+.star-input label:hover,
+.star-input label:hover ~ label {
+    color: var(--color-sand);
+}
+
+.star-input input:focus-visible + label {
+    outline: 2px solid var(--color-sand);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+.review-btn-primary,
+.review-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.review-btn-primary {
+    background: var(--color-sand);
+    color: var(--color-dark-brown);
+}
+
+.review-btn-primary:hover {
+    background: var(--color-cream);
+}
+
+.review-btn-ghost {
+    border: 1px solid color-mix(in srgb, var(--color-sand) 30%, transparent);
+    color: var(--color-light-sand);
+}
+
+.review-btn-ghost:hover {
+    background: color-mix(in srgb, var(--color-sand) 12%, transparent);
+}
+
+@media (max-width: 640px) {
+    .review-modal-header,
+    .review-modal-body,
+    .review-modal-footer {
+        padding-inline: 1.15rem;
+    }
+
+    .review-modal-footer {
+        flex-direction: column-reverse;
+    }
+
+    .review-btn-primary,
+    .review-btn-ghost {
+        justify-content: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .review-modal[open] {
+        animation: none;
+    }
+}

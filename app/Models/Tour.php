@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Support\Media;
 
 class Tour extends Model
@@ -24,6 +25,15 @@ class Tour extends Model
             'is_featured' => 'boolean',
             'rating' => 'decimal:1',
         ];
+    }
+
+    /** Where the trip stays, in running order. */
+    public function accommodations(): BelongsToMany
+    {
+        return $this->belongsToMany(Accommodation::class)
+            ->withPivot(['nights', 'sort_order'])
+            ->withTimestamps()
+            ->orderByPivot('sort_order');
     }
 
     /** Only tours the admin has published are ever shown on the public site. */

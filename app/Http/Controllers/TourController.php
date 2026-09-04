@@ -39,7 +39,10 @@ class TourController extends Controller
      */
     public function show(string $slug): View
     {
-        $tour = Tour::published()->where('slug', $slug)->firstOrFail();
+        $tour = Tour::published()
+            ->with(['accommodations' => fn ($q) => $q->published()])
+            ->where('slug', $slug)
+            ->firstOrFail();
 
         return view('tours.show', [
             'tour' => $tour,

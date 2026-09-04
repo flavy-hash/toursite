@@ -6,14 +6,23 @@ use App\Models\NavItem;
 use Illuminate\Database\Seeder;
 
 /**
- * Moves the navigation out of config/site.php and into the database, where the
- * admin panel can edit it. Idempotent — matched on location plus label, so
- * re-running refreshes rather than duplicates.
+ * Seeds the navigation from config/site.php into the database, where the admin
+ * panel takes over. Runs only while the table is empty.
  */
 class NavItemSeeder extends Seeder
 {
     public function run(): void
     {
+        /*
+         * Bootstrap content only. Once the table has rows the admin panel owns
+         * this data, and re-seeding would either clobber their edits or, if a
+         * record has been renamed, silently recreate the original alongside it.
+         */
+        if (NavItem::query()->exists()) {
+            $this->command?->info('  nav_items already has data - skipping.');
+
+            return;
+        }
         foreach (array_values(config('site.nav', [])) as $index => $item) {
             $panel = $item['panel'] ?? [];
 

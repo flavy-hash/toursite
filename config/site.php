@@ -35,7 +35,7 @@ return [
                 'location' => 'Northern Tanzania',
                 'rating' => '4.9',
                 'price' => 'From $2,450',
-                'href' => '/destinations/serengeti',
+                'href' => '/tours?region=northern',
             ],
             [
                 'image' => '/assets/images/kili.jpg',
@@ -44,7 +44,7 @@ return [
                 'location' => 'Kilimanjaro Region',
                 'rating' => '4.8',
                 'price' => 'From $1,850',
-                'href' => '/destinations/kilimanjaro',
+                'href' => '/tours?region=kilimanjaro',
             ],
             [
                 'image' => '/assets/images/carousel/Rhinos_in_Ngorongoro_Crater.jpg',
@@ -53,7 +53,7 @@ return [
                 'location' => 'Arusha Region',
                 'rating' => '4.9',
                 'price' => 'From $1,200',
-                'href' => '/destinations/ngorongoro',
+                'href' => '/tours?region=northern',
             ],
             [
                 'image' => '/assets/images/carousel/zanzibar_beach.jpg',
@@ -62,7 +62,7 @@ return [
                 'location' => 'Zanzibar Archipelago',
                 'rating' => '4.7',
                 'price' => 'From $890',
-                'href' => '/destinations/zanzibar',
+                'href' => '/tours?region=zanzibar',
             ],
         ],
 
@@ -106,7 +106,7 @@ return [
             'path' => '/tours?region=southern',
             'panel' => [
                 'heading' => 'Tanzania Southern Circuit',
-                'copy' => 'The uncrowded south  Ruaha, Nyerere (Selous) and Mikumi. Big herds, big cats and boat safaris, well away from the busier northern parks.',
+                'copy' => 'The uncrowded south — Ruaha, Nyerere (Selous) and Mikumi. Big herds, big cats and boat safaris, well away from the busier northern parks.',
                 'cta' => ['label' => 'Explore the South', 'path' => '/tours?region=southern'],
                 'image' => '/assets/images/carousel/Rhinos_in_Ngorongoro_Crater.jpg',
                 'rail' => [
@@ -120,14 +120,14 @@ return [
         ],
         [
             'name' => 'Kilimanjaro',
-            'path' => '/tours?category=mountain',
+            'path' => '/tours?region=kilimanjaro',
             'panel' => [
                 'heading' => 'Climbing the Roof of Africa',
-                'copy' => 'Rainforest to glacier at 5,895 m guided climbs with proper gear, honest acclimatisation schedules and crews who are paid properly.',
-                'cta' => ['label' => 'Climb Kilimanjaro', 'path' => '/tours?category=mountain'],
+                'copy' => 'Rainforest to glacier at 5,895 m — guided climbs with proper gear, honest acclimatisation schedules and crews who are paid properly.',
+                'cta' => ['label' => 'Climb Kilimanjaro', 'path' => '/tours?region=kilimanjaro'],
                 'image' => '/assets/images/kili.jpg',
                 'rail' => [
-                    ['name' => 'Overview', 'path' => '/destinations/kilimanjaro'],
+                    ['name' => 'Overview', 'path' => '/tours?region=kilimanjaro'],
                     ['name' => 'Machame · 7 Days', 'path' => '/tours/kilimanjaro-machame'],
                     ['name' => 'Lemosho · 8 Days', 'path' => '/tours/kilimanjaro-lemosho'],
                     ['name' => 'Marangu · 6 Days', 'path' => '/tours/kilimanjaro-marangu'],
@@ -137,14 +137,14 @@ return [
         ],
         [
             'name' => 'Zanzibar',
-            'path' => '/tours?category=beach',
+            'path' => '/tours?region=zanzibar',
             'panel' => [
                 'heading' => 'Zanzibar Island Paradise',
-                'copy' => 'Finish the safari barefoot dhow cruises, Stone Town alleyways, spice farms and the turquoise water off Mnemba Atoll.',
-                'cta' => ['label' => 'Explore Zanzibar', 'path' => '/tours?category=beach'],
+                'copy' => 'Finish the safari barefoot — dhow cruises, Stone Town alleyways, spice farms and the turquoise water off Mnemba Atoll.',
+                'cta' => ['label' => 'Explore Zanzibar', 'path' => '/tours?region=zanzibar'],
                 'image' => '/assets/images/carousel/zanzibar_beach.jpg',
                 'rail' => [
-                    ['name' => 'Beach Holidays', 'path' => '/tours?category=beach'],
+                    ['name' => 'Beach Holidays', 'path' => '/tours?region=zanzibar'],
                     ['name' => 'Stone Town Tours', 'path' => '/tours?category=beach&activity=stone-town'],
                     ['name' => 'Spice Tours', 'path' => '/tours?category=beach&activity=spice'],
                     ['name' => 'Boat Trips & Snorkeling', 'path' => '/tours?category=beach&activity=snorkeling'],
@@ -155,8 +155,8 @@ return [
             'name' => 'About',
             'path' => '/about',
             'panel' => [
-                'heading' => 'We are MICO TOUR',
-                'copy' => 'A Tanzanian-owned operator based in Arusha  the guides, planners and drivers who put every itinerary together.',
+                'heading' => 'We are TWINS AFRICAN',
+                'copy' => 'A Tanzanian-owned operator based in Arusha — the guides, planners and drivers who put every itinerary together.',
                 'cta' => ['label' => 'Meet Our Team', 'path' => '/about/team'],
                 'image' => '/assets/images/carousel/lionss_with_her_cub.jpg',
                 'rail' => [
@@ -169,8 +169,25 @@ return [
         ],
         [
             'name' => 'Contact',
-            'path' => '/contact',
+            // Anchors the footer, which carries the contact details and is
+            // present on every page.
+            'path' => '#contact',
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Page header artwork
+    |--------------------------------------------------------------------------
+    |
+    | Background photograph behind the title band on interior pages.
+    |
+    */
+
+    'page_headers' => [
+        'tours' => '/assets/images/carousel/lionss_with_her_cub.jpg',
+        'inquiry' => '/assets/images/carousel/zanzibar_beach.jpg',
+        'reviews' => '/assets/images/carousel/Rhinos_in_Ngorongoro_Crater.jpg',
     ],
 
     /*
@@ -187,7 +204,7 @@ return [
             'image' => '/assets/images/carousel/lionss_with_her_cub.jpg',
             'best' => 'Jun – Oct',
             'price' => 'From $2,450',
-            'href' => '/destinations/serengeti',
+            'href' => '/tours?region=northern',
             'featured' => true,
         ],
         [
@@ -197,7 +214,7 @@ return [
             'image' => '/assets/images/carousel/Rhinos_in_Ngorongoro_Crater.jpg',
             'best' => 'Year round',
             'price' => 'From $1,200',
-            'href' => '/destinations/ngorongoro',
+            'href' => '/tours?region=northern',
         ],
         [
             'name' => 'Mount Kilimanjaro',
@@ -206,7 +223,7 @@ return [
             'image' => '/assets/images/kili.jpg',
             'best' => 'Jan – Mar',
             'price' => 'From $1,850',
-            'href' => '/destinations/kilimanjaro',
+            'href' => '/tours?region=kilimanjaro',
         ],
         [
             'name' => 'Zanzibar Beaches',
@@ -215,68 +232,7 @@ return [
             'image' => '/assets/images/carousel/zanzibar_beach.jpg',
             'best' => 'Jun – Oct',
             'price' => 'From $890',
-            'href' => '/destinations/zanzibar',
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Featured tours
-    |--------------------------------------------------------------------------
-    */
-
-    'tours' => [
-        [
-            'name' => 'Great Migration Safari',
-            'category' => 'Wildlife',
-            'image' => '/assets/images/carousel/lionss_with_her_cub.jpg',
-            'days' => '7 Days',
-            'group' => 'Max 6',
-            'difficulty' => 'Easy',
-            'rating' => '4.9',
-            'reviews' => '412',
-            'price' => '$2,450',
-            'highlight' => 'Witnessing a cheetah hunt at sunrise',
-            'href' => '/tours/great-migration-safari',
-        ],
-        [
-            'name' => 'Kilimanjaro · Machame Route',
-            'category' => 'Mountain',
-            'image' => '/assets/images/kili.jpg',
-            'days' => '8 Days',
-            'group' => 'Max 10',
-            'difficulty' => 'Challenging',
-            'rating' => '4.8',
-            'reviews' => '287',
-            'price' => '$1,850',
-            'highlight' => 'Standing at Uhuru Peak at dawn',
-            'href' => '/tours/kilimanjaro-machame',
-        ],
-        [
-            'name' => 'Ngorongoro Crater Descent',
-            'category' => 'Wildlife',
-            'image' => '/assets/images/carousel/Rhinos_in_Ngorongoro_Crater.jpg',
-            'days' => '4 Days',
-            'group' => 'Max 6',
-            'difficulty' => 'Easy',
-            'rating' => '4.9',
-            'reviews' => '356',
-            'price' => '$1,200',
-            'highlight' => 'Black rhino on the crater floor',
-            'href' => '/tours/ngorongoro-crater',
-        ],
-        [
-            'name' => 'Zanzibar Island Escape',
-            'category' => 'Beach',
-            'image' => '/assets/images/carousel/zanzibar_beach.jpg',
-            'days' => '5 Days',
-            'group' => 'Max 12',
-            'difficulty' => 'Easy',
-            'rating' => '4.7',
-            'reviews' => '198',
-            'price' => '$890',
-            'highlight' => 'Private dinner on a sandbank at sunset',
-            'href' => '/tours/zanzibar-escape',
+            'href' => '/tours?region=zanzibar',
         ],
     ],
 
@@ -348,23 +304,59 @@ return [
     */
 
     'contact' => [
-        'email' => 'hello@micotour.co.tz',
-        'phone' => '+255 000 000 000',
+        'email' => 'hello@twinsafrican.co.tz',
+        'phone' => '+255 754 332 741',
         'address' => 'Arusha, Tanzania',
 
         // Digits only, international format, no "+" — this is what wa.me expects.
-        'whatsapp' => '255000000000',
-        'whatsapp_message' => 'Hi MICO TOUR! I am interested in booking a safari.',
+        'whatsapp' => '255754332741',
+        'whatsapp_message' => 'Hi TWINS AFRICAN! I am interested in booking a safari.',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Social profiles
+    |--------------------------------------------------------------------------
+    |
+    | Shown on the site and listed as "sameAs" in the structured data, which is
+    | how search engines tie these accounts to the business. Remove a line to
+    | drop that icon; add 'youtube' or 'x' when those accounts exist.
+    |
+    */
+
+    'social' => [
+        'instagram' => 'https://www.instagram.com/twinsafricantravel/',
+        'facebook' => 'https://www.facebook.com/TwinsAfricanTravel',
+        'tiktok' => 'https://tiktok.com/@twinsafricantravel',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Awards and badges
+    |--------------------------------------------------------------------------
+    |
+    | Shown as circular badges under the reviews on the homepage. The image is
+    | the official asset from the awarding body — replace it with the exact
+    | file they issue you each year rather than an edited copy.
+    |
+    */
+
+    'awards' => [
+        [
+            'name' => "Tripadvisor Travellers' Choice",
+            'image' => '/assets/images/OIP_5.webp',
+            'url' => 'https://www.tripadvisor.com/Profile/TwinsAfricanTravel',
+        ],
     ],
 
     'footer' => [
         [
             'heading' => 'Destinations',
             'items' => [
-                ['name' => 'Serengeti', 'path' => '/destinations/serengeti'],
-                ['name' => 'Ngorongoro', 'path' => '/destinations/ngorongoro'],
-                ['name' => 'Kilimanjaro', 'path' => '/destinations/kilimanjaro'],
-                ['name' => 'Zanzibar', 'path' => '/destinations/zanzibar'],
+                ['name' => 'Serengeti', 'path' => '/tours?region=northern'],
+                ['name' => 'Ngorongoro', 'path' => '/tours?region=northern'],
+                ['name' => 'Kilimanjaro', 'path' => '/tours?region=kilimanjaro'],
+                ['name' => 'Zanzibar', 'path' => '/tours?region=zanzibar'],
             ],
         ],
         [
@@ -381,7 +373,7 @@ return [
             'items' => [
                 ['name' => 'About Us', 'path' => '/about'],
                 ['name' => 'Plan Your Trip', 'path' => '/planning'],
-                ['name' => 'Contact', 'path' => '/contact'],
+                ['name' => 'Contact', 'path' => '#contact'],
                 ['name' => 'Privacy Policy', 'path' => '/privacy'],
             ],
         ],
@@ -402,9 +394,9 @@ return [
         ['label' => 'Home', 'path' => '/', 'icon' => 'home'],
         ['label' => 'Safaris', 'path' => '/tours?category=wildlife', 'icon' => 'compass'],
         ['label' => 'Southern', 'path' => '/tours?region=southern', 'icon' => 'pin'],
-        ['label' => 'Climbing', 'path' => '/tours?category=mountain', 'icon' => 'mountain'],
-        ['label' => 'Zanzibar', 'path' => '/tours?category=beach', 'icon' => 'wave'],
-        ['label' => 'Contact', 'path' => '/contact', 'icon' => 'mail'],
+        ['label' => 'Climbing', 'path' => '/tours?region=kilimanjaro', 'icon' => 'mountain'],
+        ['label' => 'Zanzibar', 'path' => '/tours?region=zanzibar', 'icon' => 'wave'],
+        ['label' => 'Contact', 'path' => '#contact', 'icon' => 'mail'],
     ],
 
 ];

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Tours;
 use App\Filament\Resources\Tours\Pages\CreateTour;
 use App\Filament\Resources\Tours\Pages\EditTour;
 use App\Filament\Resources\Tours\Pages\ListTours;
+use App\Filament\Resources\Tours\RelationManagers;
 use App\Filament\Resources\Tours\Schemas\TourForm;
 use App\Filament\Resources\Tours\Tables\ToursTable;
 use App\Models\Tour;
@@ -39,7 +40,7 @@ class TourResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AccommodationsRelationManager::class,
         ];
     }
 

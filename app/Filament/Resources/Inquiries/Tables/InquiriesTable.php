@@ -10,6 +10,7 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -64,6 +65,9 @@ class InquiriesTable
                     ->options(fn () => Tour::pluck('name', 'slug')->all()),
             ])
             ->recordActions([
+                // Read the whole enquiry without entering an edit form.
+                ViewAction::make(),
+
                 // The common next step, one click from the list.
                 self::confirmAction(),
 

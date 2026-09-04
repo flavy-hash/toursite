@@ -1,0 +1,209 @@
+/* ---------------------------------------------------------------------------
+ | Photo viewer
+ |--------------------------------------------------------------------------*/
+
+.lbx {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3.5rem);
+    background: color-mix(in srgb, var(--color-dark-brown) 94%, transparent);
+    backdrop-filter: blur(4px);
+}
+
+/* The [hidden] attribute has to beat display:flex above. */
+.lbx[hidden] {
+    display: none;
+}
+
+.lbx img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 30px 70px -20px rgb(0 0 0 / 0.6);
+}
+
+.lbx-close,
+.lbx-nav {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--color-sand) 30%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-sand) 12%, transparent);
+    color: var(--color-cream);
+    line-height: 1;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.lbx-close:hover,
+.lbx-nav:hover {
+    background: var(--color-sand);
+    border-color: var(--color-sand);
+    color: var(--color-dark-brown);
+}
+
+.lbx-close {
+    top: 1.1rem;
+    right: 1.1rem;
+    width: 42px;
+    height: 42px;
+    font-size: 1.6rem;
+}
+
+.lbx-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 54px;
+    font-size: 2.1rem;
+}
+
+.lbx-prev { left: 1.1rem; }
+.lbx-next { right: 1.1rem; }
+
+.lbx-count {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    color: color-mix(in srgb, var(--color-cream) 75%, transparent);
+}
+
+@media (max-width: 640px) {
+    .lbx-nav {
+        width: 44px;
+        height: 44px;
+        font-size: 1.6rem;
+    }
+
+    .lbx-prev { left: 0.35rem; }
+    .lbx-next { right: 0.35rem; }
+}
+
+/* ---------------------------------------------------------------------------
+ | Accommodation cards
+ |
+ | Proportions taken from the reference build: a two-column grid of cards with
+ | a fixed 170px photo, a strip of 52x40 thumbnails, and small tinted chips.
+ |--------------------------------------------------------------------------*/
+
+.stay-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+}
+
+@media (max-width: 900px) {
+    .stay-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stay {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-brown) 14%, transparent);
+    border-radius: 16px;
+    background: var(--color-cream);
+}
+
+/* zoom-in signals that clicking opens the viewer. */
+.stay .shot {
+    display: block;
+    position: relative;
+    height: 170px;
+    overflow: hidden;
+    cursor: zoom-in;
+}
+
+.stay .shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Stand-in when a property has no photo yet. */
+.stay .shot.is-empty {
+    display: flex;
+    align-items: flex-end;
+    padding: 0.9rem;
+    background: color-mix(in srgb, var(--color-brown) 10%, transparent);
+    cursor: default;
+}
+
+.stay .shot.is-empty span {
+    font-size: 0.5rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-brown) 55%, transparent);
+}
+
+.stay-gal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.55rem 0.6rem 0;
+}
+
+.stay-gal a {
+    display: block;
+    width: 52px;
+    height: 40px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-brown) 14%, transparent);
+    border-radius: 7px;
+    cursor: zoom-in;
+    transition: transform 200ms ease;
+}
+
+.stay-gal a:hover {
+    transform: translateY(-2px);
+}
+
+.stay-gal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stay-txt {
+    padding: 1rem 1.1rem 1.2rem;
+}
+
+.stay-name {
+    margin-bottom: 0.35rem;
+    font-size: 1.02rem;
+}
+
+.stay-where {
+    font-size: 0.54rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-brown) 70%, transparent);
+}
+
+.stay-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+}
+
+.stay-chip {
+    padding: 0.28rem 0.55rem;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--color-sand) 55%, transparent);
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brown);
+}

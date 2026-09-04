@@ -50,6 +50,9 @@ class TourForm
                             ->required()
                             ->maxLength(160)
                             ->unique(ignoreRecord: true)
+                            // Normalised on save. A slug with spaces or capitals
+                            // cannot match the route and the page 404s.
+                            ->dehydrateStateUsing(fn (?string $state) => Str::slug((string) $state))
                             ->helperText('Used in the URL: /tours/your-slug'),
 
                         TextInput::make('tagline')

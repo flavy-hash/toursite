@@ -32,11 +32,7 @@ return new class extends Migration
             $table->date('travelled_on')->nullable();
             $table->string('source')->default('website');
 
-            /*
-             * Off by default. Anything arriving from the public form is held
-             * for moderation — publishing unread submissions on a live site
-             * invites spam and abuse.
-             */
+            
             $table->boolean('is_published')->default(false)->index();
             $table->boolean('is_featured')->default(false)->index();
 

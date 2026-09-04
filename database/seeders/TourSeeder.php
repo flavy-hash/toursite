@@ -6,14 +6,23 @@ use App\Models\Tour;
 use Illuminate\Database\Seeder;
 
 /**
- * Moves the four packages that used to live in config/tours.php into the
- * database, where the admin panel can edit them. Idempotent — re-running it
- * updates the existing rows rather than duplicating them.
+ * Seeds the starter packages from config/tours.php into the database, where
+ * the admin panel takes over. Runs only while the table is empty.
  */
 class TourSeeder extends Seeder
 {
     public function run(): void
     {
+        /*
+         * Bootstrap content only. Once the table has rows the admin panel owns
+         * this data, and re-seeding would either clobber their edits or, if a
+         * record has been renamed, silently recreate the original alongside it.
+         */
+        if (Tour::query()->exists()) {
+            $this->command?->info('  tours already has data - skipping.');
+
+            return;
+        }
         $tours = config('tours', []);
 
         foreach (array_values($tours) as $index => $tour) {

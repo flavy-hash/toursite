@@ -3,7 +3,9 @@
     $contact = config('site.contact');
 @endphp
 
-<footer class="bg-dark-brown px-6 pb-10 pt-20 sm:px-12 lg:px-20">
+{{-- id="contact": the Contact nav item scrolls here rather than to a
+     separate page, since this is where the contact details live. --}}
+<footer id="contact" class="scroll-mt-24 bg-dark-brown px-6 pb-10 pt-20 sm:px-12 lg:px-20">
     <div class="mx-auto max-w-7xl">
 
         <div class="grid gap-12 lg:grid-cols-12">
@@ -27,6 +29,8 @@
                     </li>
                     <li class="text-white/55">{{ $contact['address'] }}</li>
                 </ul>
+
+                <x-social-links tone="dark" class="mt-7" />
             </div>
 
             <div class="grid gap-10 sm:grid-cols-3 lg:col-span-8">

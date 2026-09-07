@@ -199,6 +199,8 @@
                     @endforeach
                 </div>
 
+                @include('partials.tour-accommodation')
+
                 {{-- Inclusions --}}
                 <h2 class="mt-14 font-display text-3xl lg:text-4xl">What&rsquo;s included</h2>
                 <div class="mt-6 grid gap-6 sm:grid-cols-2">
@@ -233,12 +235,21 @@
                     <h2 class="mt-14 font-display text-3xl lg:text-4xl">Gallery</h2>
                     <div class="mt-6 grid gap-3 sm:grid-cols-3">
                         @foreach ($tour->gallery_urls as $image)
-                            <img
-                                src="{{ $image }}"
-                                alt="{{ $tour['name'] }}"
-                                loading="lazy"
-                                class="aspect-[4/3] w-full rounded-2xl object-cover"
+                            <a
+                                href="{{ $image }}"
+                                target="_blank"
+                                rel="noopener"
+                                data-lbx="tour-gallery"
+                                data-caption="{{ $tour->name }}"
+                                class="block cursor-zoom-in overflow-hidden rounded-2xl"
                             >
+                                <img
+                                    src="{{ $image }}"
+                                    alt="{{ $tour->name }}"
+                                    loading="lazy"
+                                    class="aspect-[4/3] w-full object-cover transition duration-500 hover:scale-105"
+                                >
+                            </a>
                         @endforeach
                     </div>
                 @endif

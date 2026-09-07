@@ -129,6 +129,72 @@ class InquiryActionTest extends TestCase
         $this->assertSame('Great Migration Safari', $fresh->tour_name);
     }
 
+    public function test_an_enquiry_can_be_viewed_without_editing_it(): void
+    {
+        $inquiry = $this->enquiry(['message' => 'Hoping to add Zanzibar afterwards.']);
+
+        Livewire::actingAs($this->admin())
+            ->test(ListInquiries::class)
+            ->assertTableActionVisible('view', $inquiry)
+            ->callTableAction('view', $inquiry)
+            ->assertHasNoTableActionErrors();
+    }
+
+    public function test_the_view_shows_everything_the_visitor_sent(): void
+    {
+        $inquiry = $this->enquiry([
+            'phone' => '+255 754 332 741',
+            'message' => 'Hoping to add Zanzibar afterwards.',
+            'travellers' => 4,
+        ]);
+
+        $this->actingAs($this->admin())
+            ->get("/admin/inquiries/{$inquiry->id}")
+            ->assertOk()
+            ->assertSee('Jane Traveller')
+            ->assertSee('jane@example.com')
+            ->assertSee('+255 754 332 741')
+            ->assertSee('Hoping to add Zanzibar afterwards.')
+            ->assertSee('Great Migration Safari');
+    }
+
+    public function test_the_view_page_offers_a_reply_link(): void
+    {
+        $inquiry = $this->enquiry();
+
+        $this->actingAs($this->admin())
+            ->get("/admin/inquiries/{$inquiry->id}")
+            ->assertOk()
+            ->assertSee('mailto:jane@example.com', false);
+    }
+
+    public function test_the_view_page_needs_an_admin(): void
+    {
+        $inquiry = $this->enquiry();
+
+        $this->get("/admin/inquiries/{$inquiry->id}")->assertRedirect('/admin/login');
+
+        $this->actingAs(User::factory()->create(['is_admin' => false]))
+            ->get("/admin/inquiries/{$inquiry->id}")
+            ->assertForbidden();
+    }
+
+    public function test_viewing_does_not_change_the_enquiry(): void
+    {
+        // A read-only view must not quietly touch the record.
+        $inquiry = $this->enquiry();
+        $before = $inquiry->updated_at;
+
+        Livewire::actingAs($this->admin())
+            ->test(ListInquiries::class)
+            ->callTableAction('view', $inquiry);
+
+        $fresh = $inquiry->fresh();
+
+        $this->assertSame(Inquiry::NEW, $fresh->status);
+        $this->assertEquals($before, $fresh->updated_at);
+    }
+
     public function test_the_dashboard_counts_follow_the_actions(): void
     {
         $inquiry = $this->enquiry();

@@ -77,7 +77,11 @@
         'telephone' => config('site.contact.phone'),
         'areaServed' => config('seo.organisation.area_served'),
         'knowsAbout' => config('seo.organisation.knows_about'),
-        'sameAs' => array_values(array_filter(config('seo.social', []))),
+        // sameAs is how search engines tie these profiles to the business.
+        'sameAs' => array_values(array_filter(array_merge(
+            config('site.social', []),
+            config('seo.social', []),
+        ))),
     ]);
 @endphp
 

@@ -126,44 +126,7 @@
             @if ($reviews->isNotEmpty())
                 <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($reviews as $review)
-                        <article class="flex h-full flex-col rounded-3xl border border-brown/10 bg-cream p-7">
-                            <div class="flex items-center gap-4">
-                                @if ($review->photo_url)
-                                    <img src="{{ $review->photo_url }}" alt="" loading="lazy"
-                                         class="h-12 w-12 shrink-0 rounded-full object-cover">
-                                @else
-                                    <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brown font-display text-lg text-cream">
-                                        {{ $review->initials }}
-                                    </span>
-                                @endif
-
-                                <div class="min-w-0">
-                                    <p class="font-display text-lg leading-tight">{{ $review->name }}</p>
-                                    @if ($review->location)
-                                        <p class="text-xs text-brown/60">{{ $review->location }}</p>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <x-stars :rating="$review->rating" class="mt-5 text-brown" />
-
-                            @if ($review->title)
-                                <h2 class="mt-4 font-display text-xl leading-snug">{{ $review->title }}</h2>
-                            @endif
-
-                            <blockquote class="mt-3 flex-1 text-[15px] font-light leading-relaxed text-brown/85">
-                                {{ $review->body }}
-                            </blockquote>
-
-                            <footer class="mt-5 border-t border-brown/10 pt-4 text-xs text-brown/65">
-                                @if ($review->tour_name)
-                                    <p>{{ $review->tour_name }}</p>
-                                @endif
-                                @if ($review->travelled_on)
-                                    <p class="mt-0.5 text-brown/50">Travelled {{ $review->travelled_on->format('F Y') }}</p>
-                                @endif
-                            </footer>
-                        </article>
+                        <x-review-card :review="$review" heading="h2" />
                     @endforeach
                 </div>
 

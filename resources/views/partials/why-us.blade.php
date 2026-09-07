@@ -19,7 +19,7 @@
 
             <a href="/about" class="mt-8 inline-flex items-center gap-2 rounded-full border border-sand/40 px-6 py-3 text-xs uppercase tracking-[0.14em] text-cream transition-colors hover:bg-sand hover:text-dark-brown">
                 Discover Our Story
-                <x-icon name="arrow" class="h-4 w-4" />
+                <x-ui-icon name="arrow" class="h-4 w-4" />
             </a>
         </div>
 
@@ -27,7 +27,7 @@
             @foreach ($pillars as $pillar)
                 <div class="flex gap-5 rounded-2xl border border-sand/15 bg-sand/5 p-6 transition-colors hover:border-sand/35">
                     <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-sand/30 text-sand">
-                        <x-icon :name="$pillar['icon']" class="h-5 w-5" />
+                        <x-ui-icon :name="$pillar['icon']" class="h-5 w-5" />
                     </span>
 
                     <div>

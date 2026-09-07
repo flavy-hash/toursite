@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import './nav.css';
+@import './review-modal.css';
+@import './lightbox.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

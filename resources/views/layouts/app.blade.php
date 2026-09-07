@@ -3,9 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="@yield('description', config('site.brand.tagline'))">
 
-    <title>@yield('title', config('site.brand.name') . ' ' . config('site.brand.suffix'))</title>
+    @include('partials.seo')
 
     <link rel="preload" as="font" type="font/woff" href="/assets/fonts/ChettaVissto.woff" crossorigin>
     <link rel="preload" as="font" type="font/ttf" href="/assets/fonts/Outfit-Regular.ttf" crossorigin>
@@ -13,13 +12,17 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen">
+    <a href="#main" class="skip-link">Skip to content</a>
+
     @include('partials.header')
 
-    <main>
+    <main id="main">
         @yield('content')
     </main>
 
     @include('partials.footer')
     @include('partials.bottom-nav')
+
+    <x-lightbox />
 </body>
 </html>

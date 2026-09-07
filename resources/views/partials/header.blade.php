@@ -1,5 +1,8 @@
 @php
-    $nav = config('site.nav');
+    // Admin-managed. Falls back to nothing rather than erroring if the table
+    // is empty — the brand and CTA still render.
+    $nav = \App\Models\NavItem::active()->location(\App\Models\NavItem::HEADER)->ordered()->get();
+
     $contact = config('site.contact');
     $current = '/' . ltrim(request()->path(), '/');
 
@@ -23,49 +26,54 @@
         {{-- Primary navigation. Becomes a drawer below lg, hidden entirely on phones. --}}
         <nav id="nav-menu" data-nav-menu class="nav-menu justify-self-center" aria-label="Primary">
             @foreach ($nav as $item)
-                @php $isCurrent = $current === $item['path']; @endphp
+                @php $isCurrent = $current === \Illuminate\Support\Str::before($item->path, '?'); @endphp
 
-                <div class="nav-item {{ isset($item['panel']) ? 'has-mega' : '' }}">
+                <div class="nav-item {{ $item->hasPanel() ? 'has-mega' : '' }}">
                     <a
-                        href="{{ $item['path'] }}"
+                        href="{{ $item->path }}"
                         @if ($isCurrent) aria-current="page" data-current="true" @endif
                         class="nav-link"
                     >
-                        {{ $item['name'] }}
-                        @isset($item['panel'])
-                            <x-icon name="chevron" class="nav-chevron h-3.5 w-3.5" />
-                        @endisset
+                        {{ $item->label }}
+                        @if ($item->hasPanel())
+                            <x-ui-icon name="chevron" class="nav-chevron h-3.5 w-3.5" />
+                        @endif
                     </a>
 
-                    @isset($item['panel'])
-                        @php $panel = $item['panel']; @endphp
-
+                    @if ($item->hasPanel())
                         {{-- Mega panel: pinned to the viewport centre, not to this trigger. --}}
                         <div class="mega">
                             {{-- Rail: every way into this section --}}
                             <div class="mega-side">
-                                @foreach ($panel['rail'] as $link)
+                                @foreach ($item->railLinks() as $link)
                                     <a href="{{ $link['path'] }}">{{ $link['name'] }}</a>
                                 @endforeach
                             </div>
 
                             {{-- Body: the pitch --}}
                             <div class="mega-main">
-                                <h3 class="font-display text-2xl text-cream">{{ $panel['heading'] }}</h3>
-                                <p class="mega-copy">{{ $panel['copy'] }}</p>
+                                <h3 class="font-display text-2xl text-cream">{{ $item->panel_heading }}</h3>
 
-                                <a href="{{ $panel['cta']['path'] }}" class="mega-cta">
-                                    {{ $panel['cta']['label'] }}
-                                    <x-icon name="arrow" class="h-4 w-4" />
-                                </a>
+                                @if ($item->panel_copy)
+                                    <p class="mega-copy">{{ $item->panel_copy }}</p>
+                                @endif
+
+                                @if ($item->panel_cta_label)
+                                    <a href="{{ $item->panel_cta_path ?: $item->path }}" class="mega-cta">
+                                        {{ $item->panel_cta_label }}
+                                        <x-ui-icon name="arrow" class="h-4 w-4" />
+                                    </a>
+                                @endif
                             </div>
 
                             {{-- Thumb --}}
-                            <div class="mega-thumb" aria-hidden="true">
-                                <img src="{{ $panel['image'] }}" alt="" loading="lazy">
-                            </div>
+                            @if ($item->panel_image_url)
+                                <div class="mega-thumb" aria-hidden="true">
+                                    <img src="{{ $item->panel_image_url }}" alt="" loading="lazy">
+                                </div>
+                            @endif
                         </div>
-                    @endisset
+                    @endif
                 </div>
             @endforeach
         </nav>
@@ -78,7 +86,7 @@
                 rel="noopener"
                 class="wa-btn"
             >
-                <x-icon name="whatsapp" class="h-5 w-5" />
+                <x-ui-icon name="whatsapp" class="h-5 w-5" />
                 <span>WhatsApp</span>
             </a>
 

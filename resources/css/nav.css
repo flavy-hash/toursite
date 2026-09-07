@@ -355,3 +355,104 @@
         padding-bottom: 68px;
     }
 }
+
+/* ---------------------------------------------------------------------------
+ | Forms
+ |--------------------------------------------------------------------------*/
+
+.form-field {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--color-brown) 20%, transparent);
+    border-radius: 14px;
+    background: var(--color-light-sand);
+    font-size: 0.9rem;
+    color: var(--color-dark-brown);
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.form-field::placeholder {
+    color: color-mix(in srgb, var(--color-brown) 45%, transparent);
+}
+
+.form-field:focus {
+    outline: none;
+    border-color: var(--color-brown);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-sand) 55%, transparent);
+}
+
+select.form-field {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                      linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position: right 1.25rem center, right 1rem center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 2.5rem;
+}
+
+textarea.form-field {
+    resize: vertical;
+    min-height: 8rem;
+}
+
+/* Tour listing filter chips */
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid color-mix(in srgb, var(--color-brown) 20%, transparent);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-brown) 80%, transparent);
+    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+.filter-chip:hover {
+    border-color: var(--color-brown);
+    color: var(--color-dark-brown);
+}
+
+.filter-chip.is-active {
+    background: var(--color-brown);
+    border-color: var(--color-brown);
+    color: var(--color-cream);
+}
+
+/* ---------------------------------------------------------------------------
+ | Interior page header
+ |
+ | The homepage hero-wash is a left-to-right gradient shaped around copy sitting
+ | on the left. Interior bands are shorter and their text may be centred, so
+ | they need an even scrim that keeps type readable right across the width.
+ |--------------------------------------------------------------------------*/
+
+.page-wash {
+    background:
+        linear-gradient(
+            to bottom,
+            color-mix(in srgb, var(--color-dark-brown) 82%, transparent) 0%,
+            color-mix(in srgb, var(--color-brown) 68%, transparent) 45%,
+            color-mix(in srgb, var(--color-dark-brown) 88%, transparent) 100%
+        );
+}
+
+/* Keyboard skip link — visible only when focused. */
+.skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    z-index: 200;
+    padding: 0.7rem 1.2rem;
+    border-radius: 0 0 12px 12px;
+    background: var(--color-sand);
+    color: var(--color-dark-brown);
+    font-size: 0.8rem;
+    transition: top 200ms ease;
+}
+
+.skip-link:focus {
+    top: 0;
+}

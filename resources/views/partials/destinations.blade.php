@@ -13,9 +13,9 @@
                 </h2>
             </div>
 
-            <a href="/destinations" class="group inline-flex items-center gap-2 border-b border-brown/30 pb-1 text-sm font-medium transition-colors hover:border-brown">
+            <a href="{{ route('tours.index') }}" class="group inline-flex items-center gap-2 border-b border-brown/30 pb-1 text-sm font-medium transition-colors hover:border-brown">
                 See All Destinations
-                <x-icon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <x-ui-icon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
         </div>
 
@@ -49,7 +49,7 @@
 
                         <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/70">
                             <span class="inline-flex items-center gap-1.5">
-                                <x-icon name="calendar" class="h-4 w-4" />
+                                <x-ui-icon name="calendar" class="h-4 w-4" />
                                 {{ $destination['best'] }}
                             </span>
                             <span class="font-semibold text-white">{{ $destination['price'] }}</span>

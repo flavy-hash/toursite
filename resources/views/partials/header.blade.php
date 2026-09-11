@@ -13,14 +13,23 @@
     {{-- Three tracks so the nav centres on the header, not on whatever the logo leaves over. --}}
     <div class="mx-auto grid max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center gap-6 px-6 py-5 lg:px-10">
 
-        {{-- Brand --}}
+        {{--
+            Brand: the full horizontal lockup — mark, TWINS, and "African
+            Travel" as one piece of artwork. Supplied white on transparency,
+            which suits the header in both its states (transparent over the
+            hero, dark brown once scrolled), so it needs no recolouring.
+
+            alt carries the brand name because the image is now the only place
+            it appears up here.
+        --}}
         <a href="/" class="justify-self-start leading-none">
-            <span class="block font-display text-xl text-white lg:text-2xl">
-                {{ config('site.brand.name') }}
-            </span>
-            <span class="mt-0.5 block text-[10px] uppercase tracking-[0.28em] text-white/70">
-                {{ config('site.brand.suffix') }}
-            </span>
+            <img
+                src="{{ asset('assets/images/logo twins mount side.png') }}"
+                alt="{{ config('site.brand.name') }} {{ config('site.brand.suffix') }}"
+                width="896"
+                height="164"
+                class="h-9 w-auto lg:h-11"
+            >
         </a>
 
         {{-- Primary navigation. Becomes a drawer below lg, hidden entirely on phones. --}}

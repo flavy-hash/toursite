@@ -14,12 +14,24 @@
     <div style="max-width:600px; margin:0 auto; padding:24px 16px;">
 
         <div style="padding:28px 24px; background:#3a2418; border-radius:18px 18px 0 0; text-align:center;">
-            <p style="margin:0; font-size:22px; letter-spacing:1px; color:#f0e6d2;">
-                {{ config('site.brand.name') }}
-            </p>
-            <p style="margin:6px 0 0; font-size:10px; letter-spacing:4px; text-transform:uppercase; color:#e5d3b3;">
-                {{ config('site.brand.suffix') }}
-            </p>
+            {{--
+                Absolute URL: an email has no page to resolve a relative path
+                against. The logo is a cream wordmark on transparency, which is
+                why it sits on the brown block rather than the white body.
+
+                width/height are set as attributes as well as in the style,
+                because Outlook ignores CSS dimensions on images. The file is
+                896px wide and shown at 240, so it stays sharp on retina.
+
+                alt carries the brand name so a client that blocks remote
+                images — Outlook does by default — still shows who sent this.
+            --}}
+            <img src="{{ url('/assets/images/logo-side.png') }}"
+                 alt="{{ config('site.brand.name') }} {{ config('site.brand.suffix') }}"
+                 width="240" height="44"
+                 style="display:block; margin:0 auto; width:240px; height:auto; max-width:100%;
+                        border:0; outline:none; text-decoration:none;
+                        font-size:20px; letter-spacing:1px; color:#f0e6d2;">
         </div>
 
         <div style="padding:32px 24px; background:#ffffff; border-radius:0 0 18px 18px;">
@@ -34,12 +46,23 @@
             <p style="margin:0 0 10px;">
                 <a href="{{ url('/') }}" style="color:#8a7a68;">{{ parse_url(url('/'), PHP_URL_HOST) }}</a>
             </p>
-            {{-- Required on marketing email, and it must be one click. --}}
-            <p style="margin:0;">
-                <a href="{{ $unsubscribeUrl }}" style="color:#8a7a68; text-decoration:underline;">
-                    Unsubscribe from these emails
-                </a>
-            </p>
+            {{--
+                Required on marketing email, and it must be one click. Absent on
+                transactional mail such as a booking confirmation, which the
+                recipient must receive whether or not they take the newsletter —
+                offering to unsubscribe from it would be misleading.
+            --}}
+            @if (! empty($unsubscribeUrl))
+                <p style="margin:0;">
+                    <a href="{{ $unsubscribeUrl }}" style="color:#8a7a68; text-decoration:underline;">
+                        Unsubscribe from these emails
+                    </a>
+                </p>
+            @else
+                <p style="margin:0;">
+                    {{ config('site.contact.email') }} &middot; {{ config('site.contact.phone') }}
+                </p>
+            @endif
         </div>
     </div>
 </body>

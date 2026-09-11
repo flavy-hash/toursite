@@ -2,9 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\BookingConfirmed;
 use App\Mail\SubscriberWelcome;
+use App\Models\Inquiry;
 use App\Models\Subscriber;
+use App\Models\Tour;
 use Illuminate\Console\Command;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -17,7 +21,9 @@ use Throwable;
  */
 class TestMail extends Command
 {
-    protected $signature = 'mail:test {email : Where to send the test}';
+    protected $signature = 'mail:test
+        {email : Where to send the test}
+        {--booking : Send the booking confirmation instead of the welcome email}';
 
     protected $description = 'Send a test email and report the transport actually used';
 
@@ -52,15 +58,10 @@ class TestMail extends Command
             $this->newLine();
         }
 
-        // Not persisted — the mailable only needs something to address and to
-        // build an unsubscribe link from.
-        $subscriber = new Subscriber(['email' => $to]);
-        $subscriber->id = 0;
-
         try {
             // Sent immediately, bypassing the queue, so any error surfaces here
             // rather than inside a worker.
-            Mail::to($to)->sendNow(new SubscriberWelcome($subscriber));
+            Mail::to($to)->sendNow($this->message($to));
         } catch (Throwable $e) {
             $this->error('  Send failed: ' . $e->getMessage());
             $this->newLine();
@@ -75,5 +76,34 @@ class TestMail extends Command
         $this->newLine();
 
         return self::SUCCESS;
+    }
+
+    /**
+     * A sample of whichever email is being checked.
+     *
+     * Nothing here is persisted — the mailables only need something to address
+     * and to render from, so a test never leaves a stray subscriber or a fake
+     * booking in the database.
+     */
+    private function message(string $to): Mailable
+    {
+        if ($this->option('booking')) {
+            $inquiry = new Inquiry([
+                'name' => 'Sample Guest',
+                'email' => $to,
+                'tour_name' => Tour::published()->ordered()->value('name') ?: 'Great Migration Safari',
+                'tour_slug' => Tour::published()->ordered()->value('slug'),
+                'travel_date' => now()->addMonths(2),
+                'travellers' => 2,
+            ]);
+            $inquiry->id = 0;
+
+            return new BookingConfirmed($inquiry);
+        }
+
+        $subscriber = new Subscriber(['email' => $to]);
+        $subscriber->id = 0;
+
+        return new SubscriberWelcome($subscriber);
     }
 }

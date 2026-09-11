@@ -1,9 +1,12 @@
 /**
- * Photo viewer.
+ * Media viewer.
  *
  * Any <a data-lbx="group"> opens every link sharing that group, so the arrows
- * walk one property's photos. Triggers are ordinary links to the full image,
- * so without JavaScript the photo still opens in a new tab.
+ * walk one property's photos. Triggers are ordinary links to the full file, so
+ * without JavaScript the photo or video still opens in a new tab.
+ *
+ * A trigger marked data-lbx-type="video" plays in the <video> element instead
+ * of loading into the <img>.
  */
 export default function lightbox() {
     const box = document.querySelector('#lbx');
@@ -13,6 +16,7 @@ export default function lightbox() {
     }
 
     const img = box.querySelector('img');
+    const video = box.querySelector('.lbx-video');
     const count = box.querySelector('.lbx-count');
     const close = box.querySelector('.lbx-close');
     const prev = box.querySelector('.lbx-prev');
@@ -22,11 +26,36 @@ export default function lightbox() {
     let at = 0;
     let opener = null;
 
+    // Stop playback and release the file before showing anything else.
+    const stopVideo = () => {
+        if (!video) {
+            return;
+        }
+
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+        video.hidden = true;
+    };
+
     const show = (index) => {
         at = (index + shots.length) % shots.length;
 
-        img.src = shots[at].src;
-        img.alt = shots[at].alt;
+        const shot = shots[at];
+
+        stopVideo();
+
+        if (shot.type === 'video' && video) {
+            img.hidden = true;
+            img.removeAttribute('src');
+
+            video.src = shot.src;
+            video.hidden = false;
+        } else {
+            img.hidden = false;
+            img.src = shot.src;
+            img.alt = shot.alt;
+        }
 
         const many = shots.length > 1;
         prev.hidden = next.hidden = !many;
@@ -48,6 +77,9 @@ export default function lightbox() {
     const dismiss = () => {
         box.hidden = true;
         document.body.style.overflow = '';
+
+        stopVideo();
+        img.hidden = false;
         img.removeAttribute('src');
 
         // Send focus back where it came from rather than to the top of the page.
@@ -55,7 +87,7 @@ export default function lightbox() {
         opener = null;
     };
 
-    // Delegated, so photos rendered after load still work.
+    // Delegated, so media rendered after load still works.
     document.addEventListener('click', (event) => {
         const link = event.target.closest('a[data-lbx]');
 
@@ -65,7 +97,11 @@ export default function lightbox() {
             const group = [...document.querySelectorAll(`a[data-lbx="${link.dataset.lbx}"]`)];
 
             open(
-                group.map((a) => ({ src: a.href, alt: a.dataset.caption || '' })),
+                group.map((a) => ({
+                    src: a.href,
+                    alt: a.dataset.caption || '',
+                    type: a.dataset.lbxType === 'video' ? 'video' : 'image',
+                })),
                 group.indexOf(link),
                 link,
             );
@@ -73,7 +109,7 @@ export default function lightbox() {
             return;
         }
 
-        // A click landing on the backdrop itself came from outside the photo.
+        // A click landing on the backdrop itself came from outside the media.
         if (event.target === box) {
             dismiss();
         }
@@ -88,6 +124,8 @@ export default function lightbox() {
             return;
         }
 
+        // Let the space bar reach the video's own controls rather than
+        // hijacking every key while a video is focused.
         if (event.key === 'Escape') {
             dismiss();
         } else if (event.key === 'ArrowLeft') {

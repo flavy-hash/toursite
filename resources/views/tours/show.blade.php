@@ -54,24 +54,16 @@
             ] : null,
         ];
 
-        $breadcrumbs = [
-            '@context' => 'https://schema.org',
-            '@type' => 'BreadcrumbList',
-            'itemListElement' => [
-                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
-                ['@type' => 'ListItem', 'position' => 2, 'name' => 'Tours', 'item' => route('tours.index')],
-                ['@type' => 'ListItem', 'position' => 3, 'name' => $tour->name, 'item' => route('tours.show', $tour->slug)],
-            ],
-        ];
     @endphp
 
     <script type="application/ld+json">
     {!! json_encode($trip, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
     </script>
 
-    <script type="application/ld+json">
-    {!! json_encode($breadcrumbs, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
-    </script>
+    <x-seo-breadcrumbs :trail="[
+        ['name' => 'Tours', 'url' => route('tours.index')],
+        ['name' => $tour->name, 'url' => route('tours.show', $tour->slug)],
+    ]" />
 @endpush
 
 @section('content')
@@ -231,24 +223,56 @@
 
                 {{-- Gallery. Skipped entirely when the package has no photos,
                      rather than leaving a heading over an empty grid. --}}
-                @if ($tour->gallery_urls)
+                @if ($tour->gallery_items)
                     <h2 class="mt-14 font-display text-3xl lg:text-4xl">Gallery</h2>
                     <div class="mt-6 grid gap-3 sm:grid-cols-3">
-                        @foreach ($tour->gallery_urls as $image)
+                        @foreach ($tour->gallery_items as $item)
                             <a
-                                href="{{ $image }}"
+                                href="{{ $item['url'] }}"
                                 target="_blank"
                                 rel="noopener"
                                 data-lbx="tour-gallery"
+                                data-lbx-type="{{ $item['type'] }}"
+                                @if ($item['mime']) data-lbx-mime="{{ $item['mime'] }}" @endif
                                 data-caption="{{ $tour->name }}"
-                                class="block cursor-zoom-in overflow-hidden rounded-2xl"
+                                class="group relative block cursor-zoom-in overflow-hidden rounded-2xl"
                             >
-                                <img
-                                    src="{{ $image }}"
-                                    alt="{{ $tour->name }}"
-                                    loading="lazy"
-                                    class="aspect-[4/3] w-full object-cover transition duration-500 hover:scale-105"
-                                >
+                                @if ($item['type'] === 'video')
+                                    {{--
+                                        #t=0.1 asks the browser for a frame a
+                                        fraction of a second in, so the tile
+                                        shows the video rather than black.
+                                        preload="metadata" fetches only enough
+                                        to do that, not the whole file.
+                                    --}}
+                                    <video
+                                        src="{{ $item['url'] }}#t=0.1"
+                                        preload="metadata"
+                                        muted
+                                        playsinline
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                        class="aspect-[4/3] w-full bg-brown/15 object-cover transition duration-500 group-hover:scale-105"
+                                    ></video>
+
+                                    <span class="pointer-events-none absolute inset-0 flex items-center justify-center">
+                                        <span class="flex h-14 w-14 items-center justify-center rounded-full bg-dark-brown/70 backdrop-blur-sm">
+                                            {{-- Simple triangle: no icon in the set reads as "play". --}}
+                                            <svg viewBox="0 0 24 24" fill="currentColor" class="ml-1 h-6 w-6 text-cream">
+                                                <path d="M8 5v14l11-7z" />
+                                            </svg>
+                                        </span>
+                                    </span>
+
+                                    <span class="sr-only">Play video</span>
+                                @else
+                                    <img
+                                        src="{{ $item['url'] }}"
+                                        alt="{{ $tour->name }}"
+                                        loading="lazy"
+                                        class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
+                                    >
+                                @endif
                             </a>
                         @endforeach
                     </div>

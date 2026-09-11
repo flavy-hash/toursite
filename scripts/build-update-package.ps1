@@ -117,6 +117,14 @@ if ($logos) {
     $logos | ForEach-Object { Copy-Item $_.FullName (Join-Path $target $_.Name) -Force }
 }
 
+# Browser-tab icons. The live favicon.ico is a 0-byte file from the original
+# deployment, which is why the tab was showing a generated letter.
+foreach ($icon in @('favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png',
+                    'apple-touch-icon.png', 'favicon-512x512.png')) {
+    $source = Join-Path $root "public\$icon"
+    if (Test-Path $source) { Copy-Item $source (Join-Path $webDir $icon) -Force }
+}
+
 # ---------------------------------------------------------------------------
 # 3. Zip, with forward slashes so Linux unpacks a tree rather than one flat
 #    folder of backslashed filenames. See DEPLOY.md.

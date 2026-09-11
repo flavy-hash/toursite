@@ -60,7 +60,7 @@ class InquiryInfolist
                 ]),
 
             Section::make('Handling')
-                ->columns(2)
+                ->columns(3)
                 ->schema([
                     TextEntry::make('status')
                         ->badge()
@@ -72,6 +72,18 @@ class InquiryInfolist
                         ->dateTime('j F Y, H:i')
                         ->since()
                         ->tooltip(fn (Inquiry $record) => $record->created_at?->format('j F Y, H:i')),
+
+                    // Whether the guest actually knows they are booked, which is
+                    // not the same question as whether staff marked them booked.
+                    TextEntry::make('confirmation_sent_at')
+                        ->label('Guest notified')
+                        ->badge()
+                        ->visible(fn (Inquiry $record) => $record->isBooked())
+                        ->color(fn (Inquiry $record) => $record->confirmationWasSent() ? 'success' : 'warning')
+                        ->formatStateUsing(fn (Inquiry $record) => $record->confirmationWasSent()
+                            ? 'Emailed ' . $record->confirmation_sent_at?->format('j F Y, H:i')
+                            : 'Not yet emailed')
+                        ->placeholder('Not yet emailed'),
                 ]),
         ]);
     }

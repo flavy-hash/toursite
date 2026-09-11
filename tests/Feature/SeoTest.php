@@ -48,6 +48,14 @@ class SeoTest extends TestCase
 
                 return $decoded;
             })
+            /*
+             * The site-wide blocks live inside one @graph, so flatten those
+             * nodes up to the top level. Callers then look up a type the same
+             * way whether it was emitted standalone or as part of the graph.
+             */
+            ->flatMap(fn (array $block) => isset($block['@graph'])
+                ? $block['@graph']
+                : [$block])
             ->all();
     }
 
@@ -244,4 +252,179 @@ class SeoTest extends TestCase
             $this->assertSame([$width, $height], array_slice(getimagesize($path), 0, 2), "{$file} is the wrong size");
         }
     }
+
+    // --- Structured data graph ---------------------------------------------
+
+    /** @return array<int, array<string, mixed>> */
+    private function jsonLd(string $url): array
+    {
+        $html = $this->get($url)->assertOk()->getContent();
+
+        preg_match_all('#<script type="application/ld\+json">(.*?)</script>#s', $html, $matches);
+
+        return array_map(function (string $json) {
+            $decoded = json_decode(trim($json), true);
+
+            $this->assertNotNull($decoded, 'A JSON-LD block on the page is not valid JSON.');
+
+            return $decoded;
+        }, $matches[1]);
+    }
+
+    /** @param array<int, array<string, mixed>> $blocks */
+    private function graphNode(array $blocks, string $type): ?array
+    {
+        foreach ($blocks as $block) {
+            foreach ($block['@graph'] ?? [] as $node) {
+                if (($node['@type'] ?? null) === $type) {
+                    return $node;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function test_the_organisation_and_website_share_one_graph(): void
+    {
+        /*
+         * Two unrelated blocks make a crawler guess that the business and the
+         * site belong together. One @graph with cross-referenced @ids says so.
+         */
+        $blocks = $this->jsonLd('/');
+
+        $graphs = array_filter($blocks, fn (array $b) => isset($b['@graph']));
+
+        $this->assertCount(1, $graphs, 'expected exactly one @graph block');
+
+        $organisation = $this->graphNode($blocks, config('seo.organisation.type'));
+        $website = $this->graphNode($blocks, 'WebSite');
+
+        $this->assertNotNull($organisation);
+        $this->assertNotNull($website);
+
+        // The link between them is the whole point.
+        $this->assertSame($organisation['@id'], $website['publisher']['@id']);
+    }
+
+    public function test_the_organisation_carries_a_square_logo(): void
+    {
+        // Google wants at least 112px square for the result header.
+        $organisation = $this->graphNode($this->jsonLd('/'), config('seo.organisation.type'));
+
+        $this->assertSame('ImageObject', $organisation['logo']['@type']);
+        $this->assertSame(512, $organisation['logo']['width']);
+        $this->assertSame(512, $organisation['logo']['height']);
+        $this->assertStringContainsString('favicon-512x512.png', $organisation['logo']['url']);
+
+        $this->assertFileExists(public_path('favicon-512x512.png'));
+    }
+
+    public function test_the_website_node_names_the_bare_domain(): void
+    {
+        // What Google usually prints above the result.
+        $website = $this->graphNode($this->jsonLd('/'), 'WebSite');
+
+        $this->assertSame(config('seo.organisation.name'), $website['name']);
+        $this->assertSame(parse_url(url('/'), PHP_URL_HOST), $website['alternateName']);
+    }
+
+    public function test_the_rating_is_published_once_there_are_reviews(): void
+    {
+        \App\Models\Review::create([
+            'name' => 'Amina', 'email' => 'a@example.com', 'rating' => 5,
+            'body' => 'Superb trip from start to finish.', 'is_published' => true,
+        ]);
+
+        $organisation = $this->graphNode($this->jsonLd('/'), config('seo.organisation.type'));
+
+        $this->assertSame(1, $organisation['aggregateRating']['reviewCount']);
+        $this->assertSame(5, (int) $organisation['aggregateRating']['ratingValue']);
+    }
+
+    public function test_no_rating_is_claimed_when_there_are_no_reviews(): void
+    {
+        // An aggregateRating with a zero count is a structured-data error, not
+        // a neutral statement.
+        $organisation = $this->graphNode($this->jsonLd('/'), config('seo.organisation.type'));
+
+        $this->assertArrayNotHasKey('aggregateRating', $organisation);
+    }
+
+    public function test_an_unpublished_review_does_not_inflate_the_rating(): void
+    {
+        \App\Models\Review::create([
+            'name' => 'Held back', 'email' => 'h@example.com', 'rating' => 1,
+            'body' => 'Awaiting moderation.', 'is_published' => false,
+        ]);
+
+        $organisation = $this->graphNode($this->jsonLd('/'), config('seo.organisation.type'));
+
+        $this->assertArrayNotHasKey('aggregateRating', $organisation);
+    }
+
+    // --- Breadcrumbs --------------------------------------------------------
+
+    /** @param array<int, array<string, mixed>> $blocks */
+    private function breadcrumb(array $blocks): ?array
+    {
+        foreach ($blocks as $block) {
+            if (($block['@type'] ?? null) === 'BreadcrumbList') {
+                return $block;
+            }
+        }
+
+        return null;
+    }
+
+    public function test_inner_pages_carry_a_breadcrumb_trail(): void
+    {
+        \App\Models\Page::create([
+            'slug' => \App\Models\Page::ABOUT, 'title' => 'About Us',
+            'sections' => [], 'is_published' => true,
+        ]);
+
+        foreach (['/tours', '/reviews', '/inquiry', '/about'] as $path) {
+            $crumb = $this->breadcrumb($this->jsonLd($path));
+
+            $this->assertNotNull($crumb, "no BreadcrumbList on {$path}");
+            $this->assertSame('Home', $crumb['itemListElement'][0]['name']);
+        }
+    }
+
+    public function test_breadcrumb_positions_run_without_a_gap(): void
+    {
+        // A break in the sequence invalidates the whole list.
+        \App\Models\Page::create([
+            'slug' => \App\Models\Page::TEAM, 'title' => 'Our Team',
+            'sections' => [], 'is_published' => true,
+        ]);
+        \App\Models\Page::create([
+            'slug' => \App\Models\Page::ABOUT, 'title' => 'About Us',
+            'sections' => [], 'is_published' => true,
+        ]);
+
+        $crumb = $this->breadcrumb($this->jsonLd('/about/team'));
+
+        $positions = array_column($crumb['itemListElement'], 'position');
+
+        $this->assertSame([1, 2, 3], $positions);
+        $this->assertSame(['Home', 'About Us', 'Our Team'], array_column($crumb['itemListElement'], 'name'));
+    }
+
+    public function test_the_home_page_has_no_breadcrumb(): void
+    {
+        // A trail of one entry pointing at itself says nothing.
+        $this->assertNull($this->breadcrumb($this->jsonLd('/')));
+    }
+
+    public function test_every_breadcrumb_item_has_an_absolute_url(): void
+    {
+        $crumb = $this->breadcrumb($this->jsonLd('/tours'));
+
+        foreach ($crumb['itemListElement'] as $item) {
+            $this->assertStringStartsWith('http', $item['item'], 'breadcrumb urls must be absolute');
+        }
+    }
+
 }

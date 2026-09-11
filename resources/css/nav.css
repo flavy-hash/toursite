@@ -10,6 +10,20 @@
 
 @layer components {
 
+    /*
+     * The twin-peaks mark is supplied as dark ink on transparency, but the
+     * header is dark in both its states. brightness(0) flattens it to black
+     * whatever the source colour, invert(1) lifts it to white, and the opacity
+     * settles it to the same cream as the wordmark beside it.
+     *
+     * Done in CSS rather than shipping a second recoloured PNG, so there is
+     * only ever one file to replace when the artwork changes.
+     */
+    .brand-mark {
+        filter: brightness(0) invert(1);
+        opacity: 0.92;
+    }
+
     .nav-menu {
         display: flex;
         align-items: center;
@@ -455,4 +469,121 @@ textarea.form-field {
 
 .skip-link:focus {
     top: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ | FAQ accordion
+ |
+ | Built on native <details>, so it opens with JavaScript off and is keyboard
+ | and screen-reader correct without any script of ours.
+ |--------------------------------------------------------------------------*/
+
+.faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.15rem 0.25rem;
+    cursor: pointer;
+    font-size: 1.02rem;
+    line-height: 1.5;
+    list-style: none;
+    transition: color 180ms ease;
+}
+
+/* Safari draws its own disclosure triangle unless this is cleared. */
+.faq-q::-webkit-details-marker {
+    display: none;
+}
+
+.faq-q:hover {
+    color: var(--color-brown);
+}
+
+.faq-q:focus-visible {
+    outline: 2px solid var(--color-brown);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+.faq-mark {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 1px solid color-mix(in srgb, var(--color-brown) 25%, transparent);
+    border-radius: 999px;
+    transition: transform 220ms ease, background-color 220ms ease;
+}
+
+.faq[open] .faq-mark {
+    transform: rotate(180deg);
+    background: color-mix(in srgb, var(--color-brown) 10%, transparent);
+}
+
+.faq-a {
+    padding: 0 0.25rem 1.35rem;
+    max-width: 62ch;
+}
+
+.faq-a p {
+    color: color-mix(in srgb, var(--color-brown) 82%, transparent);
+    font-size: 0.95rem;
+    line-height: 1.75;
+}
+
+.faq-a p + p {
+    margin-top: 0.85rem;
+}
+
+/* ---------------------------------------------------------------------------
+ | Homepage YouTube panel
+ |
+ | Follows serengetiwildway.com's treatment: one 16:9 player in a rounded,
+ | bordered frame with a dark caption bar beneath it. The padding-bottom
+ | percentage is the classic ratio trick — it reserves the right height before
+ | the iframe loads, so the page does not jump.
+ |--------------------------------------------------------------------------*/
+
+.yt-frame {
+    max-width: 880px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-brown) 18%, transparent);
+    border-radius: 22px;
+    background: var(--color-dark-brown);
+    box-shadow: 0 30px 60px -28px color-mix(in srgb, var(--color-dark-brown) 55%, transparent);
+}
+
+.yt-ratio {
+    position: relative;
+    padding-bottom: 56.25%;   /* 16:9 */
+}
+
+.yt-ratio iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.yt-cap {
+    padding: 1.1rem 1.4rem;
+    text-align: left;
+    color: var(--color-cream);
+}
+
+.yt-cap h3 {
+    font-size: 1.1rem;
+    color: var(--color-sand);
+}
+
+.yt-cap p {
+    margin-top: 0.3rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
 }

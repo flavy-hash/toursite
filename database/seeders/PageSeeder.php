@@ -69,8 +69,8 @@ class PageSeeder extends Seeder
                         'image' => null,
                     ],
                 ],
-                'meta_description' => "{$brand} is a Tanzanian-owned safari and trekking operator "
-                    . 'based in Arusha, planning and running every trip ourselves.',
+                'meta_description' => 'A Tanzanian-owned safari and trekking operator based in '
+                    . 'Arusha, planning and running every trip ourselves.',
             ],
 
             Page::TEAM => [
@@ -81,7 +81,8 @@ class PageSeeder extends Seeder
                     . 'see it through on the ground.',
                 'hero_image' => config('site.page_headers.reviews'),
                 'sections' => [],
-                'meta_description' => "Meet the guides, planners and drivers behind {$brand}.",
+                'meta_description' => 'Meet the guides, planners and drivers who plan your trip '
+                    . 'and see it through on the ground.',
             ],
 
             Page::FAQ => [

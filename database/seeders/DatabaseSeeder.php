@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             TourSeeder::class,
             NavItemSeeder::class,
             ReviewSeeder::class,
+            PageSeeder::class,
+            FaqSeeder::class,
+            HomeVideoSeeder::class,
         ]);
     }
 }

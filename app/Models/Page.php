@@ -104,10 +104,23 @@ class Page extends Model
         return $this->meta_title ?: $this->title;
     }
 
-    /** Falls back to the intro, trimmed to a sensible length for a snippet. */
-    public function metaDescription(): ?string
+    /**
+     * Falls back to the intro, then to the site default.
+     *
+     * Never null: Blade reads @section('description', null) as the opening of
+     * a buffered block and waits for an @endsection that never comes, which
+     * leaks an output buffer for the rest of the request.
+     */
+    public function metaDescription(): string
     {
-        return $this->meta_description
-            ?: ($this->intro ? str($this->intro)->squish()->limit(155)->value() : null);
+        if (filled($this->meta_description)) {
+            return $this->meta_description;
+        }
+
+        if (filled($this->intro)) {
+            return str($this->intro)->squish()->limit(155)->value();
+        }
+
+        return config('seo.default_description');
     }
 }

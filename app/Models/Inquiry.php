@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\InquiryObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy(InquiryObserver::class)]
 class Inquiry extends Model
 {
     public const NEW = 'new';
@@ -59,6 +62,7 @@ class Inquiry extends Model
     {
         return [
             'travel_date' => 'date',
+            'confirmation_sent_at' => 'datetime',
         ];
     }
 
@@ -86,5 +90,21 @@ class Inquiry extends Model
     public function isBooked(): bool
     {
         return $this->status === self::BOOKED;
+    }
+
+    /** Whether the guest has been emailed that their booking is confirmed. */
+    public function confirmationWasSent(): bool
+    {
+        return $this->confirmation_sent_at !== null;
+    }
+
+    /**
+     * Booked, but the guest has not been told. Normally momentary; it persists
+     * when the mail server was unreachable at the time, which is exactly when
+     * staff need to see it.
+     */
+    public function awaitsConfirmationEmail(): bool
+    {
+        return $this->isBooked() && ! $this->confirmationWasSent();
     }
 }

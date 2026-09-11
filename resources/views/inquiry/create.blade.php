@@ -7,6 +7,10 @@
      state should never be indexed. --}}
 @section('robots', 'noindex, follow')
 
+@push('schema')
+    <x-seo-breadcrumbs :trail="[['name' => 'Book a Trip', 'url' => route('inquiry.create')]]" />
+@endpush
+
 @section('content')
 
     <section class="relative isolate overflow-hidden bg-dark-brown px-6 pb-16 pt-32 sm:px-12 lg:px-20 lg:pb-20 lg:pt-44">

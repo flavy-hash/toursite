@@ -9,8 +9,8 @@ return [
     */
 
     'brand' => [
-        'name' => 'TWINS AFRICAN',
-        'suffix' => 'Travel',
+        'name' => '',
+        'suffix' => '',
         'tagline' => 'Extraordinary Adventures in Tanzania',
     ],
 
@@ -163,7 +163,7 @@ return [
                     ['name' => 'About Us', 'path' => '/about'],
                     ['name' => 'Our Team', 'path' => '/about/team'],
                     ['name' => 'Reviews', 'path' => '/reviews'],
-                    ['name' => 'FAQ', 'path' => '/planning?section=faqs'],
+                    ['name' => 'FAQ', 'path' => '/faq'],
                 ],
             ],
         ],
@@ -304,7 +304,7 @@ return [
     */
 
     'contact' => [
-        'email' => 'hello@twinsafrican.co.tz',
+        'email' => 'info@twinsafricantravel.com',
         'phone' => '+255 754 332 741',
         'address' => 'Arusha, Tanzania',
 

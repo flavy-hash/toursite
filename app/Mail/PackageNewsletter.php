@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Queue\SerializesModels;
 
 /**
@@ -32,11 +33,30 @@ class PackageNewsletter extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: $this->subjectLine);
+        return new Envelope(
+            subject: $this->subjectLine,
+            replyTo: [config('site.contact.email')],
+        );
+    }
+
+    /**
+     * Mail providers weigh this heavily when deciding whether bulk mail is
+     * wanted: an unsubscribe the client can offer in its own UI, rather than
+     * only a link buried in the footer. Gmail in particular treats its absence
+     * as a spam signal on anything that looks like a newsletter.
+     */
+    public function headers(): Headers
+    {
+        return new Headers(text: [
+            'List-Unsubscribe' => '<' . $this->subscriber->unsubscribeUrl() . '>',
+        ]);
     }
 
     public function content(): Content
     {
-        return new Content(view: 'emails.newsletter');
+        return new Content(
+            view: 'emails.newsletter',
+            text: 'emails.text.newsletter',
+        );
     }
 }

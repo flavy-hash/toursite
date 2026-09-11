@@ -37,6 +37,10 @@
     @endpush
 @endif
 
+@push('schema')
+    <x-seo-breadcrumbs :trail="[['name' => 'Reviews', 'url' => route('reviews.index')]]" />
+@endpush
+
 @section('content')
 
     {{-- ── Header ────────────────────────────────────────────────────── --}}

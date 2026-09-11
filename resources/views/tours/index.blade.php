@@ -23,6 +23,10 @@
     </script>
 @endpush
 
+@push('schema')
+    <x-seo-breadcrumbs :trail="[['name' => 'Tours', 'url' => route('tours.index')]]" />
+@endpush
+
 @section('content')
 
     {{-- Same proportions as a package hero, so the two pages sit level. --}}

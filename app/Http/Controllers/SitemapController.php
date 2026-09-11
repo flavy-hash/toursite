@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Page;
 use App\Models\Tour;
 use Illuminate\Http\Response;
 
@@ -19,6 +20,21 @@ class SitemapController extends Controller
             ['loc' => url('/'), 'priority' => '1.0', 'freq' => 'weekly'],
             ['loc' => route('tours.index'), 'priority' => '0.9', 'freq' => 'weekly'],
         ];
+
+        // Editable pages, listed only while published — the same rule the
+        // routes apply, so the sitemap never points at a 404.
+        foreach (Page::published()->get() as $page) {
+            if (! $page->url()) {
+                continue;
+            }
+
+            $urls[] = [
+                'loc' => $page->url(),
+                'lastmod' => $page->updated_at?->toAtomString(),
+                'priority' => '0.6',
+                'freq' => 'monthly',
+            ];
+        }
 
         foreach (Tour::published()->ordered()->get() as $tour) {
             $urls[] = [

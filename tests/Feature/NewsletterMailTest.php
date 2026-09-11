@@ -206,4 +206,37 @@ class NewsletterMailTest extends TestCase
             ->test(ListSubscribers::class)
             ->assertActionHidden('sendNewsletter');
     }
+
+    public function test_marketing_mail_carries_a_list_unsubscribe_header(): void
+    {
+        /*
+         * Mail clients surface this as their own unsubscribe control, and
+         * providers treat its absence on bulk mail as a spam signal — which
+         * is what was landing the newsletter in Gmail's spam folder.
+         */
+        $subscriber = Subscriber::create(['email' => 'reader@example.com', 'subscribed_at' => now()]);
+
+        $headers = (new SubscriberWelcome($subscriber))->headers();
+
+        $this->assertArrayHasKey('List-Unsubscribe', $headers->text);
+        $this->assertStringContainsString(
+            $subscriber->unsubscribeUrl(),
+            $headers->text['List-Unsubscribe']
+        );
+
+        // RFC 2369 requires the URI in angle brackets.
+        $this->assertStringStartsWith('<', $headers->text['List-Unsubscribe']);
+        $this->assertStringEndsWith('>', $headers->text['List-Unsubscribe']);
+    }
+
+    public function test_transactional_mail_carries_no_unsubscribe_header(): void
+    {
+        // A booking confirmation is not something to opt out of, so it defines
+        // no headers() at all — the framework only calls it when present.
+        $this->assertFalse(
+            method_exists(\App\Mail\BookingConfirmed::class, 'headers'),
+            'BookingConfirmed should not declare an unsubscribe header'
+        );
+    }
+
 }

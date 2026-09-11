@@ -19,12 +19,22 @@
     display: none;
 }
 
-.lbx img {
+/* Photo and video share the framing so swapping between them does not
+   shift the viewer around. */
+.lbx img,
+.lbx-video {
     max-width: 100%;
     max-height: 100%;
     border-radius: 12px;
     object-fit: contain;
     box-shadow: 0 30px 70px -20px rgb(0 0 0 / 0.6);
+}
+
+/* Wide enough that the browser's own controls are usable on a phone, without
+   stretching a portrait clip to fill the screen. */
+.lbx-video {
+    width: min(100%, 1100px);
+    background: #000;
 }
 
 .lbx-close,

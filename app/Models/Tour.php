@@ -16,6 +16,7 @@ class Tour extends Model
     {
         return [
             'gallery' => 'array',
+            'gallery_videos' => 'array',
             'summary' => 'array',
             'highlights' => 'array',
             'itinerary' => 'array',
@@ -60,6 +61,58 @@ class Tour extends Model
             ->filter()
             ->values()
             ->all());
+    }
+
+    /** @return array<int, string> */
+    protected function galleryVideoUrls(): Attribute
+    {
+        return Attribute::get(fn (): array => collect($this->gallery_videos ?? [])
+            ->map(fn (string $path) => static::mediaUrl($path))
+            ->filter()
+            ->values()
+            ->all());
+    }
+
+    /**
+     * Everything in the gallery, videos first, each tagged with its kind so
+     * one grid and one viewer can handle both.
+     *
+     * @return array<int, array{type: string, url: string, mime: ?string}>
+     */
+    protected function galleryItems(): Attribute
+    {
+        return Attribute::get(function (): array {
+            $videos = collect($this->gallery_video_urls)->map(fn (string $url): array => [
+                'type' => 'video',
+                'url' => $url,
+                'mime' => static::videoMime($url),
+            ]);
+
+            $images = collect($this->gallery_urls)->map(fn (string $url): array => [
+                'type' => 'image',
+                'url' => $url,
+                'mime' => null,
+            ]);
+
+            return $videos->concat($images)->all();
+        });
+    }
+
+    /**
+     * <source type> for a video, worked out from the extension.
+     *
+     * Browsers can usually cope without it, but giving it saves them
+     * downloading part of a file only to find they cannot play it.
+     */
+    public static function videoMime(string $url): ?string
+    {
+        return match (strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: $url, PATHINFO_EXTENSION))) {
+            'mp4', 'm4v' => 'video/mp4',
+            'webm' => 'video/webm',
+            'ogv', 'ogg' => 'video/ogg',
+            'mov' => 'video/quicktime',
+            default => null,
+        };
     }
 
     /** Kept as a thin alias; the logic is shared with the navigation. */

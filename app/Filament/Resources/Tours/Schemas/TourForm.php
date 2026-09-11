@@ -190,6 +190,36 @@ class TourForm
                                 ->maxSize(8192)
                                 ->panelLayout('grid')
                                 ->helperText('You can select several at once. The gallery section only appears on the site once there is at least one photo.'),
+
+                            /*
+                             * Separate from the photos above so that field keeps
+                             * its image editor and thumbnails. On the package
+                             * page both are shown in the same grid, videos first.
+                             */
+                            FileUpload::make('gallery_videos')
+                                ->label('Videos')
+                                ->multiple()
+                                ->reorderable()
+                                ->appendFiles()
+                                ->disk('public')
+                                ->directory('tours/gallery/video')
+                                ->visibility('public')
+                                ->openable()
+                                ->downloadable()
+                                ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'])
+                                /*
+                                 * Same ceiling as Livewire's temporary-upload
+                                 * rule, which is checked first: if this were
+                                 * the larger of the two, the file would be
+                                 * rejected upstream with no useful message.
+                                 */
+                                ->maxSize((int) env('LIVEWIRE_UPLOAD_MAX_KB', 102400))
+                                ->helperText(fn (): string => 'MP4 works everywhere; WebM and MOV also play in '
+                                    . 'most browsers. Up to '
+                                    . round(((int) env('LIVEWIRE_UPLOAD_MAX_KB', 102400)) / 1024)
+                                    . ' MB each, though your hosting may cap uploads lower — if a file will '
+                                    . 'not upload, that is usually why. Videos appear before the photos in '
+                                    . 'the gallery.'),
                         ]),
                 ]),
 
